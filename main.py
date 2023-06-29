@@ -2,10 +2,11 @@ from fastapi import FastAPI
 from datetime import datetime
 import sqlite3
 from sqlite3 import Error
+from sqlite3 import Connection
 
 app = FastAPI()
 
-def create_connection(db_file):
+def create_connection(db_file:str) -> Connection | None:
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -14,7 +15,7 @@ def create_connection(db_file):
 
     return conn
 
-def create_table(conn):
+def create_table(conn:Connection):
     sql_projects = """
     CREATE TABLE IF NOT EXISTS iot1(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,7 +31,7 @@ def create_table(conn):
         print(e)
 
 
-def insert_project(conn, project):
+def insert_project(conn:Connection, project:tuple[str,float,float]):
     sql = """
     INSERT INTO iot1(date,light,temperature)
     VALUES(?,?,?)
@@ -44,7 +45,7 @@ def read_root():
     return {"Hello": "rebort"}
 
 @app.get("/items/{item_id}")
-async def read_item(item_id):
+async def read_item(item_id:int):
     return {"item_id": item_id}
 
 #query parameter
@@ -53,9 +54,10 @@ async def read_item(item_id):
 async def read_items(time:str = datetime.now().strftime("%Y%m%d %H:%M:%S"),light:float = 0.0, temperature:float=0.0):
    #"時間":time.strftime("%Y%m%d %H:%M:%S"),
    conn = create_connection('data.db')
-   create_table(conn)
-   insert_project(conn, (time,light,temperature))
-   conn.close()
+   if conn is not None:
+        create_table(conn)
+        insert_project(conn, (time,light,temperature))
+        conn.close()
 
    return {
        "時間":time,
