@@ -15,6 +15,19 @@ def create_connection(db_file:str) -> Connection | None:
 
     return conn
 
+def select_alltasks(conn:Connection):
+    #sql="Select * from ios1"
+    sql="""
+        SELECT * 
+        FROM iot1 
+        ORDER by date DESC 
+        LIMIT 100
+    """
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    rows=cursor.fetchall()
+    return rows
+
 def create_table(conn:Connection):
     sql_projects = """
     CREATE TABLE IF NOT EXISTS iot1(
