@@ -101,7 +101,7 @@ async def read_item3(item_count:int):
         rows = select_alltasks(conn,item_count)
         with open('output.csv','w',encoding='utf8',newline='') as file:
             csv_write = csv.writer(file)
-            csv_write.writerow(['時間','亮度','溫度'])
+            csv_write.writerow(['序','時間','亮度','溫度'])
             for row in rows:
                 csv_write.writerow(row)
         #print(rows)
