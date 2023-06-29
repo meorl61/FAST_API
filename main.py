@@ -15,13 +15,13 @@ def create_connection(db_file:str) -> Connection | None:
 
     return conn
 
-def select_alltasks(conn:Connection):
+def select_alltasks(conn:Connection,count:int):
     #sql="Select * from ios1"
-    sql="""
+    sql= f"""
         SELECT * 
         FROM iot1 
         ORDER by date DESC 
-        LIMIT 100
+        LIMIT {count}
     """
     cursor = conn.cursor()
     cursor.execute(sql)
@@ -61,6 +61,7 @@ def read_root():
 async def read_item(item_id:int):
     return {"item_id": item_id}
 
+
 #query parameter
 @app.get("/raspberry")
 #async def read_items(time:datetime = datetime.now(),light:float = 0.0, temperature:float=0.0):
@@ -76,4 +77,16 @@ async def read_items(time:str = datetime.now().strftime("%Y%m%d %H:%M:%S"),light
        "時間":time,
        "光線":light,
        "溫度":temperature
-   }    
+   }   
+
+#query parameter
+@app.get("/iot_json/{item_count}")
+async def read_item2(item_count:int):
+    conn = create_connection('data.db')
+    if conn is not None:
+        create_table(conn)
+        rows = select_alltasks(conn,item_count)
+        #print(rows)
+        conn.close()  
+        return rows
+    
