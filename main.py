@@ -99,7 +99,7 @@ async def read_item3(item_count:int):
     if conn is not None:
         create_table(conn)
         rows = select_alltasks(conn,item_count)
-        with open('output.csv','w',encoding='utf8',newline='') as file:
+        with open('output.csv','w',encoding='big5',newline='') as file:
             csv_write = csv.writer(file)
             csv_write.writerow(['序','時間','亮度','溫度'])
             for row in rows:
